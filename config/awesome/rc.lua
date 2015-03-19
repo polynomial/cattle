@@ -460,3 +460,4 @@ end
 
 run_once("xscreensaver -no-splash")
 run_once("eval `cat ~/.fehbg`")
+run_once("sudo ~/bin/cpu_speed")

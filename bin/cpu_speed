@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -x
+for i in /sys/devices/system/cpu/*/*/scaling_max_freq /sys/devices/system/cpu/*/*/scaling_min_freq; do
+  echo 800000 >$i
+done
