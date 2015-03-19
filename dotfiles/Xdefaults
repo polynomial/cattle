@@ -1,0 +1,3 @@
+urxvt*font: xft:terminus:pixelsize=22
+urxvt*boldFont: xft:terminus:pixelsize=22
+urxvt*background: [95]#000000

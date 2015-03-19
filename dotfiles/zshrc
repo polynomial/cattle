@@ -1,0 +1,120 @@
+bindkey -e
+bindkey '^R' history-incremental-search-backward
+export HISTSIZE=100000
+export OS=`uname`
+case $OS in
+  Linux)
+    alias ls="ls -iskAF"
+  ;;
+  FreeBSD)
+    alias ls="ls -ATiFsk"
+    export TOP="-Sio cpu"
+  ;;
+  Darwin)
+    echo 'Did we escape yet?'
+  ;;
+esac
+
+# customize path based on machine type
+export PATH=$PATH:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
+# I haven't had a shell with a VENDOR that is sun in ten years, maybe I just keep this for memories (:
+if [ x$VENDOR = x"sun" ]; then
+  export  PS1="%n%?%l%m%~ "
+  export PATH=/usr/ccs/bin:/usr/local/ssl/bin:/usr/ucb:$PATH
+else 
+  export  PS1="%n%?%l%m%~ "
+  export PATH=$PATH:$HOME/bin:/usr/X11R6:/usr/X11R6/bin:/usr/games
+fi
+#export PATH=/opt/bin:/opt/sbin:/opt/local/bin:/opt/local/sbin:$PATH:~/bin/
+
+#machine shortcuts
+alias t="ssh ben@tspigot.net"
+alias b="ssh -e ^t -A bsmith@10.10.2.210"
+
+#aliases of justice
+alias ss='ssh -2 -A -x -l root -e ^t '
+alias sd="screen -d"
+alias sr="screen -r"
+alias less="less -C "
+alias .zs="source ~/.zshrc"
+alias kw="(killall wterm&)"
+alias xterm="xterm -bg black -fg green -sb -ls -sl 10000 &"
+
+# maybe make other stuff easier
+alias mp="mplayer -fs -zoom "
+alias mogm='mplayer -fs -aid 1 -sid 0 -v '
+alias p="feh -FzZdD15 "
+alias f="feh -FZd "
+
+# learn to type or drink less
+alias figner="finger"
+alias ns="nslookup"
+alias pign="ping"
+alias whios="whois"
+
+#networking aliases
+alias arin="whois -h whois.arin.net "
+alias ripe="whois -h whois.ripe.net "
+alias apnic="whois -h whois.apnic.net "
+alias aip="whois -h whois.apnic.net "
+alias att="telnet -e ^T route-server.ip.att.net"
+alias e="telnet -e ^T route-server.exodus.net"
+alias geek="whois -h whois.geektools.com "
+alias otraceroute="traceroute -A -h whois.radb.net -l -N -t 16 "
+
+# shell settings
+umask 77
+export BLOCKSIZE=K
+export crt=24
+export EDITOR=vim
+export MAILCHECK=30
+export PAGER=less
+export SPROMPT="$PS1 (sp) %R %r%# "
+unsetopt correctall
+unsetopt noclobber
+setopt longlistjobs
+setopt mailwarning 
+setopt nobeep
+
+# history
+set APPEND_HISTORY
+set EXTENDED_HISTORY
+set HIST_EXPIRE_DUPS_FIRST
+setopt RCS
+export HISTFILE=~/.zsh_history
+export PAGER=less
+export SAVEHIST=1000000
+
+# use agent if its been setup
+if [ -f ~/.a ]; then 
+  export SSH_AGENT_PID=`grep AGENT_PID ~/.a | sed 's/.*\=\(.*\); .*/\1/'`
+  export SSH_AUTH_SOCK=`grep AUTH_SOCK ~/.a | sed 's/.*\=\(.*\)\; .*/\1/'`
+fi
+
+# use a SOCK if we got here that way
+if [ x${SOCK} != "x"  ]; then
+  export DISPLAY=$SOCK
+fi
+
+# X stuff
+# try and set display if we ssh'd here(otherwise make it :0.0 for local compat)
+if [ -z "$DISPLAY" ] ; then
+  if [ -n "$SSH_CLIENT" ] ; then
+    export DISPLAY=`echo $SSH_CLIENT | sed 's/ [0-9]* .*//'`:0.1
+  fi
+fi
+
+# this set's our xterm to be u@h ~
+case $TERM in
+  *rxvt*)
+    precmd () {print -Pn "\e]0;%n@%m: %~\a"}
+  ;;
+  xterm*)
+    precmd () {print -Pn "\e]0;%n@%m: %~\a"}
+  ;;
+esac
+
+# overwrite anything here with a the local if it exists
+if [ -f ~/.zsh_local ]; then
+  source ~/.zsh_local
+fi

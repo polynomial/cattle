@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+keybase login
+# decrypt ssh keys
+# place in ssh dir
+# copy shell stuff in place
+# login to chrome
+# TODO:
+#  irssi
+#  bitlbee
