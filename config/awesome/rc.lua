@@ -48,6 +48,8 @@ dec_backlight = "xbacklight -dec 5"
 inc_backlight = "xbacklight -inc 5"
 dec_sound = "amixer set Master 5%-"
 inc_sound = "amixer set Master 5%+"
+start_vpnc = "sudo vpnc /etc/vpnc/lookout.conf"
+stop_vpnc = "sudo pkill vpnc"
 _backlight = "xbacklight -dec 10"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
@@ -254,6 +256,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "e", function () awful.util.spawn(dec_sound) end),
     awful.key({ modkey,           }, "u", function () awful.util.spawn(inc_sound) end),
     awful.key({ modkey,           }, "p", function () awful.util.spawn(screen_lock) end),
+    awful.key({ modkey,           }, "g", function () awful.util.spawn(start_vpnc) end),
+    awful.key({ modkey,           }, "c", function () awful.util.spawn(stop_vpnc) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
@@ -464,3 +468,4 @@ end
 run_once("xscreensaver -no-splash")
 run_once("eval `cat ~/.fehbg`")
 run_once("sudo ~/bin/cpu_speed")
+run_once("xflux -z 94111")
