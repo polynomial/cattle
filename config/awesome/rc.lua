@@ -44,8 +44,10 @@ beautiful.init("/nix/store/j57q66lha96qmhs7n6nj2fgqzz5mp95p-awesome-3.5.6/share/
 terminal = "urxvt -sl 10000 +sb -ls -fg green -bg black"
 screen_lock = "xscreensaver-command -activate"
 screen_lock_daemon = "xscreensaver -no_splash"
-dec_backlight = "xbacklight -dec 10"
-inc_backlight = "xbacklight -inc 10"
+dec_backlight = "xbacklight -dec 5"
+inc_backlight = "xbacklight -inc 5"
+dec_sound = "amixer set Master 5%-"
+inc_sound = "amixer set Master 5%+"
 _backlight = "xbacklight -dec 10"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
@@ -240,7 +242,6 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
     awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
-    awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
     awful.key({ modkey,           }, "Tab",
         function ()
             awful.client.focus.byidx(-1)
@@ -250,6 +251,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey,           }, "a", function () awful.util.spawn(dec_backlight) end),
     awful.key({ modkey,           }, "o", function () awful.util.spawn(inc_backlight) end),
+    awful.key({ modkey,           }, "e", function () awful.util.spawn(dec_sound) end),
+    awful.key({ modkey,           }, "u", function () awful.util.spawn(inc_sound) end),
     awful.key({ modkey,           }, "p", function () awful.util.spawn(screen_lock) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
