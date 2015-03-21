@@ -29,16 +29,20 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./vpnc.nix
     ];
 
   # Use the gummiboot efi boot loader.
   boot.loader.gummiboot.enable = true;
   boot.loader.gummiboot.timeout = 10;
   boot.loader.efi.canTouchEfiVariables = true;
+  security.sudo.wheelNeedsPassword = false;
 
   networking.hostName = "bsmith-laptop"; # Define your hostname.
   networking.hostId = "f18ed587";
   networking.wireless.enable = true;  # Enables wireless.
+#  networking.vpnc.enable = true;
+
 
   # Select internationalisation properties.
   i18n = {
@@ -91,7 +95,6 @@ in
     gnupg
     vpnc
     ack
-    openvpn
     awesome
     python
 #    python2.7-pip

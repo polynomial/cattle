@@ -11,6 +11,8 @@
   boot.initrd.availableKernelModules = [ "xhci_hcd" "ahci" "usbhid" "usb_storage" ];
   boot.kernelModules = [ "kvm-intel" "wl" ];
   boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+  boot.extraModprobeConfig = "options snd_hda_intel index=0 model=intel-mac-auto id=PCH
+    options snd_hda_intel index=1 model=intel-mac-auto id=HDMI";
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/e083c11a-3cf2-415e-a5d4-22bd50823a87";
