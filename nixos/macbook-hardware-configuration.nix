@@ -11,8 +11,12 @@
   boot.initrd.availableKernelModules = [ "xhci_hcd" "ahci" "usbhid" "usb_storage" ];
   boot.kernelModules = [ "kvm-intel" "wl" ];
   boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
-  boot.extraModprobeConfig = "options snd_hda_intel index=0 model=intel-mac-auto id=PCH
-    options snd_hda_intel index=1 model=intel-mac-auto id=HDMI";
+  boot.extraModprobeConfig = ''
+    options snd_hda_intel index=0 model=intel-mac-auto id=PCH
+    options snd_hda_intel index=1 model=intel-mac-auto id=HDMI
+    options snd-hda-intel mobel=mbp101
+    options hid_apple fnmode=2
+  '';
   boot.loader.gummiboot.enable = true;
   boot.loader.gummiboot.timeout = 10;
   boot.loader.efi.canTouchEfiVariables = true;
