@@ -29,6 +29,7 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./virtualbox.nix
       ./vpnc.nix
       ./users.nix
       ./xserver.nix
@@ -60,7 +61,12 @@ in
   nix.trustedBinaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
 
   environment.systemPackages = with pkgs; [
+    nixops
+    nixbang
+    aws
+    awscli
     keybase-node-client
+    gimp
     gnupg
     vpnc
     ack
@@ -71,9 +77,16 @@ in
     xflux
     cmake
     gnumake
+    python27Packages.pip
+    pypy
+    linuxPackages_3_4.virtualbox
+    vagrant
+    mtr
+    packer
     xscreensaver
     rxvt
     acpi
+    hugin
     autojump
     axel
     bind
