@@ -7,19 +7,16 @@
 let
   hsPackages = with pkgs.haskellPackages; [
     cabal2nix
-    cabalInstall
     djinn
     doctest
     ghc
-    ghcCore
     ghcid
     hlint
-    idris
+    #idris
     pandoc
     pointfree
     pointful
     purescript
-    stylishHaskell
     taffybar
     xmobar
     yeganesh
@@ -46,7 +43,7 @@ in
   };
 
   services.acpid.enable = true;
-  services.rsyslogd.enable = true;
+  #services.rsyslogd.enable = true;
   services.upower.enable = true;
   services.openssh.enable = true;
 
@@ -60,18 +57,22 @@ in
   nix.binaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
   nix.trustedBinaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
 
+  
   environment.systemPackages = with pkgs; [
-    nixops
+    xpdf
+    #nixops
     nixbang
-    aws
+    packer
+    firefox
     awscli
-    keybase-node-client
+    #keybase-node-client
     gimp
     gnupg
     vpnc
     ack
     awesome
     python
+    python3
     autoconf
     automake
     xflux
@@ -80,10 +81,12 @@ in
     python27Packages.pip
     pypy
     linuxPackages_3_4.virtualbox
-    vagrant
     mtr
-    packer
-    xscreensaver
+    xclip
+    terminus_font
+    xlibs.xbacklight
+    bc
+    oraclejdk8
     rxvt
     acpi
     hugin
@@ -97,9 +100,9 @@ in
     file
     gitFull
     htop
-    (haskellPackages.hoogleLocal.override {
-      packages = hsPackages;
-    })
+    #(haskellPackages.hoogleLocal.override {
+    #  packages = hsPackages;
+    #})
     keepassx
     mg
     mplayer
@@ -123,6 +126,8 @@ in
 
     allowUnfree = true;
 
+    config.firefox.enableGoogleTalkPlugin = true;
+    config.firefox.enableAdobeFlash = true;
     chromium.enablePepperFlash = true;
     chromium.enablePepperPDF = true;
 
