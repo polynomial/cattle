@@ -1,0 +1,7 @@
+export ZENOSS_INSTANCE=
+export ZENOSS_USERNAME=
+
+alias v="ssh -A bens@204.77.168.53"
+export PATH="$PATH:/home/bsmith/src/keyringer"
+#stty erase 
+source /home/bsmith/src/zedtech/lib/bash/bootstrap.sh
