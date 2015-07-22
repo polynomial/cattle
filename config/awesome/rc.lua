@@ -38,11 +38,11 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/nix/store/j57q66lha96qmhs7n6nj2fgqzz5mp95p-awesome-3.5.6/share/awesome/themes/default/theme.lua")
+beautiful.init("/nix/store/02r07l8zj0ypf3hdzp98rsfzhz547ylp-awesome-3.5.6/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "urxvt -sl 10000 +sb -ls -fg green -bg black"
-screen_lock = "xscreensaver-command -activate"
+screen_lock = "slimlock"
 screen_lock_daemon = "xscreensaver -no_splash"
 dec_backlight = "xbacklight -dec 5"
 inc_backlight = "xbacklight -inc 5"
@@ -465,7 +465,6 @@ function run_once(cmd)
   awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
 end
 
-run_once("xscreensaver -no-splash")
 run_once("eval `cat ~/.fehbg`")
 run_once("sudo ~/bin/cpu_speed")
 run_once("xflux -z 94111")
