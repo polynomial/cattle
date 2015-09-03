@@ -18,7 +18,7 @@
     options hid_apple fnmode=2
   '';
   boot.loader.gummiboot.enable = true;
-  boot.loader.gummiboot.timeout = 10;
+  boot.loader.gummiboot.timeout = 2;
   boot.loader.efi.canTouchEfiVariables = true;
 
   fileSystems."/" =
