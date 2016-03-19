@@ -5,22 +5,7 @@
 { config, pkgs, ... }:
 
 let
-  hsPackages = with pkgs.haskellPackages; [
-    cabal2nix
-    djinn
-    doctest
-    ghc
-    ghcid
-    hlint
-    #idris
-    pandoc
-    pointfree
-    pointful
-    purescript
-    taffybar
-    xmobar
-    yeganesh
-  ];
+
 in
 {
   imports =
@@ -60,9 +45,6 @@ in
   
   environment.systemPackages = with pkgs; [
     xpdf
-    #nixops
-    nixbang
-    packer
     firefox
     awscli
     #keybase-node-client
@@ -80,7 +62,6 @@ in
     gnumake
     python27Packages.pip
     pypy
-    linuxPackages_3_4.virtualbox
     mtr
     xclip
     terminus_font
@@ -100,9 +81,6 @@ in
     file
     gitFull
     htop
-    #(haskellPackages.hoogleLocal.override {
-    #  packages = hsPackages;
-    #})
     keepassx
     mg
     mplayer
@@ -115,12 +93,10 @@ in
     scrot
     silver-searcher
     terminator
-    vagrant
-    wpa_supplicant_gui
     xdg_utils
     xlibs.xev
     xlibs.xset
-  ] ++ hsPackages;
+  ];
 
   nixpkgs.config = {
 
@@ -131,14 +107,6 @@ in
     chromium.enablePepperFlash = true;
     chromium.enablePepperPDF = true;
 
-    packageOverrides = pkgs: {
-      linux_3_17 = pkgs.linux_3_17.override {
-        extraConfig =
-        ''
-          THUNDERBOLT m
-        '';
-      };
-    };
   };
 
 }
