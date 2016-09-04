@@ -1,7 +1,7 @@
-urxvt*font: xft:terminus:pixelsize=22
-urxvt*boldFont: xft:terminus:pixelsize=22
-urxvt*background: [95]#000000
-URxvt.letterSpace: -1
+urxvt*font: xft:FreeMono:pixelsize=20
+urxvt*boldFont: xft:FreeMono:pixelsize=20
+#urxvt*background: [95]#000000
+#URxvt.letterSpace: -1
 #URxvt.lineSpace: -3
 !!! XTerm
 
@@ -101,27 +101,27 @@ URxvt.scrollBar: false
 URxvt.underLine: on
 URxvt.renderFont: true
 URxvt.faceName: Inconsolata
-URxvt.faceSize1: 14
-URxvt.faceSize2: 16
-URxvt.faceSize3: 18
-URxvt.faceSize4: 20
+URxvt.faceSize1: 10
+URxvt.faceSize2: 10
+URxvt.faceSize3: 10
+URxvt.faceSize4: 10
 URxvt.faceSize5: 24
 URxvt.faceSize6: 32
-URxvt.initialFont: 4
-#URxvt.urlLauncher: firefox
-#URxvt.selectToClipboard: true
-#URxvt.perl-ext: default,matcher,font-size,url-select
-#URxvt.url-launcher: firefox
-#URxvt.url-select.launcher: firefox
-#URxvt.url-select.underline: true
+URxvt.initialFont: 6
+!URxvt.urlLauncher: firefox
+!URxvt.selectToClipboard: true
+!URxvt.perl-ext: default,matcher,font-size,url-select
+!URxvt.url-launcher: firefox
+!URxvt.url-select.launcher: firefox
+!URxvt.url-select.underline: true
 
 ! Clickable URLs
-#URxvt.matcher.button: 1
+!URxvt.matcher.button: 1
 
 ! Mouse free URL clicks
-#URxvt.keysym.C-u:     perl:url-select:select_next
+!URxvt.keysym.C-u:     perl:url-select:select_next
 
-#URxvt.keysym.F11:     perl:fullscreen:switch
-#URxvt.font-size.step: 2
-#URxvt.keysym.F4:      perl:font-size:incglobal
-#URxvt.keysym.F3:      perl:font-size:decglobal
+!URxvt.keysym.F11:     perl:fullscreen:switch
+!URxvt.font-size.step: 2
+!URxvt.keysym.F4:      perl:font-size:incglobal
+!URxvt.keysym.F3:      perl:font-size:decglobal

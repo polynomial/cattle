@@ -20,7 +20,7 @@ set linebreak   "wrap lines at convenient points
 set whichwrap+=<,>,[,]
 
 "set selection=exclusive
-"set selectmode=mouse,key
+"set selectmode=key
 "set mousemodel=popup
 "set keymodel=startsel,stopsel
 
@@ -57,7 +57,7 @@ set laststatus=2  " Always show status line.
  
 " gvim specific
 set mousehide  " Hide mouse after chars typed
-set mouse=a  " Mouse in all modes
+"set mouse=a  " Mouse in all modes
 
 " Backups & Files
 set backup                   " Enable creation of backup file.

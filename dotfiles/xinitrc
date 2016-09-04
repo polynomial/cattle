@@ -1,9 +1,4 @@
 cd ~
-#xmodmap .xmodmap
 xset r rate 200 50
-#setxkbmap dvorak
-xscreensaver -no-splash &
 xset b 0
 eval $(cat ~/.fehbg)
-
-logger -t local1 -p none hi
