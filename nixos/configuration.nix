@@ -3,110 +3,91 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
 let
+  vars = import ./vars.nix { inherit pkgs; };
 
-in
-{
+in {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
-      ./virtualbox.nix
-      ./vpnc.nix
-      ./users.nix
-      ./xserver.nix
     ];
+  nixpkgs.config.allowUnfree = true;
+virtualisation.virtualbox.host.enable = true;
 
-  security.sudo.wheelNeedsPassword = false; # maybe I am power hungry?
-
-  networking.hostName = "bsmith-laptop"; # Define your hostname.
-  networking.hostId = "f18ed587";
-  networking.wireless.enable = true;
-
-  i18n = {
-    consoleKeyMap = "dvorak";
+  services.rpcbind.enable = true;
+  services.nfs.server = {
+    enable = true;
+    exports = ''
+      /home/bsmith/src/extole/tech 10.0.0.0/8(rw,all_squash,anonuid=1000,anongid=100)
+    '';
   };
 
-  services.acpid.enable = true;
-  #services.rsyslogd.enable = true;
-  services.upower.enable = true;
-  services.openssh.enable = true;
+  # Use the systemd-boot efi boot loader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  #boot.kernelPackages = pkgs.linuxPackages_4_6;
 
-  programs.ssh.agentTimeout = "12h";
-  programs.zsh.enable = true;
+
+  networking.extraHosts = ''
+    23.62.88.204 origin.extole.io origin.pr.extole.io
+  '';
+  networking.hostName = vars.hostName;
+  networking.wireless.enable = true;
+  networking.wireless.userControlled.enable = true;
+
+  # Select internationalisation properties.
+  i18n = {
+    consoleFont = "Lat2-Terminus16";
+    consoleKeyMap = "us";
+    defaultLocale = "en_US.UTF-8";
+  };
+
+  # Set your time zone.
+  time.timeZone = vars.timeZone;
+
+  # List packages installed in system profile. To search by name, run:
+  environment.systemPackages = vars.systemPackages;
+
+  hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   powerManagement.enable = true;
-  time.timeZone = "America/Los_Angeles";
-  fonts.enableCoreFonts = true;
 
-  nix.binaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
-  nix.trustedBinaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
+  services.tlp.enable = false;
+  services.upower.enable = true;
+  services.sshd.enable = true;
 
-  
-  environment.systemPackages = with pkgs; [
-    xpdf
-    firefox
-    awscli
-    #keybase-node-client
-    gimp
-    gnupg
-    vpnc
-    ack
-    awesome
-    python
-    python3
-    autoconf
-    automake
-    xflux
-    cmake
-    gnumake
-    python27Packages.pip
-    pypy
-    mtr
-    xclip
-    terminus_font
-    xlibs.xbacklight
-    bc
-    oraclejdk8
-    rxvt
-    acpi
-    hugin
-    autojump
-    axel
-    bind
-    binutils
-    chromium
-    dmenu
-    evince
-    file
-    gitFull
-    htop
-    keepassx
-    mg
-    mplayer
-    nix-repl
-    openconnect
-    powertop
-    rxvt_unicode
-    sbt
-    vim
-    scrot
-    silver-searcher
-    terminator
-    xdg_utils
-    xlibs.xev
-    xlibs.xset
-  ];
+  # Enable the X11 windowing system.
+  services.xserver = {
+    enable = true;
+    layout = vars.layout;
+    windowManager.default = "awesome";
+    windowManager.awesome.enable = true;
+    desktopManager.default = "none";
+    desktopManager.xterm.enable = false;
 
-  nixpkgs.config = {
+    xkbOptions = "terminate:ctrl_alt_bksp, ctrl:nocaps";
+    videoDrivers = [ "intel" ];
 
-    allowUnfree = true;
+    multitouch.enable = true;
+    multitouch.invertScroll = true;
+    multitouch.ignorePalm = true;
 
-    config.firefox.enableGoogleTalkPlugin = true;
-    config.firefox.enableAdobeFlash = true;
-    chromium.enablePepperFlash = true;
-    chromium.enablePepperPDF = true;
-
+    synaptics.enable = true;
+    synaptics.tapButtons = false;
+    synaptics.twoFingerScroll = true;
+    synaptics.palmDetect = true;
   };
 
+  security.sudo.enable = true;
+  security.sudo.wheelNeedsPassword = false;
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.extraUsers."${vars.username}" = {
+    isNormalUser = true;
+    uid = 1000;
+    extraGroups = [ "wheel" "audio" "video" "systemd-journal" "systemd-network" ];
+    shell = "/run/current-system/sw/bin/zsh";
+  };
+
+  #system.stateVersion = "16.03";
 }
