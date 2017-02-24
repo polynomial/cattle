@@ -38,12 +38,13 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/nix/store/02r07l8zj0ypf3hdzp98rsfzhz547ylp-awesome-3.5.6/share/awesome/themes/default/theme.lua")
+beautiful.init("/nix/store/q59yrc01mafcsmdqk02dsf4523702fhk-awesome-3.5.9/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt -sl 10000 +sb -ls -fg green -bg black"
+terminal = "urxvt -sl 10000 +sb -ls"
 screen_lock = "slimlock"
 screen_lock_daemon = "xscreensaver -no_splash"
+new_background = "feh --randomize --bg-center /home/bsmith/.desktop"
 dec_backlight = "xbacklight -dec 5"
 inc_backlight = "xbacklight -inc 5"
 dec_sound = "amixer set Master 5%-"
@@ -256,6 +257,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "e", function () awful.util.spawn(dec_sound) end),
     awful.key({ modkey,           }, "u", function () awful.util.spawn(inc_sound) end),
     awful.key({ modkey,           }, "p", function () awful.util.spawn(screen_lock) end),
+    awful.key({ modkey,           }, "b", function () awful.util.spawn(new_background) end),
     awful.key({ modkey,           }, "g", function () awful.util.spawn(start_vpnc) end),
     awful.key({ modkey,           }, "c", function () awful.util.spawn(stop_vpnc) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
@@ -465,6 +467,6 @@ function run_once(cmd)
   awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
 end
 
-run_once("eval `cat ~/.fehbg`")
-run_once("sudo ~/bin/cpu_speed")
-run_once("xflux -z 94111")
+run_once("feh --randomize --bg-center /home/bsmith/.desktop")
+run_once("xflux -z 94005")
+run_once("xbattbar -a -O black -o black -t 1 right")

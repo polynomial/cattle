@@ -1,8 +1,9 @@
-urxvt*font: xft:FreeMono:pixelsize=20
-urxvt*boldFont: xft:FreeMono:pixelsize=20
-#urxvt*background: [95]#000000
-#URxvt.letterSpace: -1
-#URxvt.lineSpace: -3
+Emacs.font: Terminus-24
+*font: xft:FreeMono:pixelsize=24
+*boldFont: xft:FreeMono:pixelsize=24
+!urxvt*background: [95]#000000
+!URxvt.letterSpace: -1
+!URxvt.lineSpace: -3
 !!! XTerm
 
 XTerm*color0: #111111
@@ -99,15 +100,15 @@ URxvt.dynamicColors: off
 URxvt.highlightSelection: true
 URxvt.scrollBar: false
 URxvt.underLine: on
-URxvt.renderFont: true
+!URxvt.renderFont: true
 URxvt.faceName: Inconsolata
-URxvt.faceSize1: 10
-URxvt.faceSize2: 10
-URxvt.faceSize3: 10
-URxvt.faceSize4: 10
+URxvt.faceSize1: 20
+URxvt.faceSize2: 20
+URxvt.faceSize3: 20
+URxvt.faceSize4: 20
 URxvt.faceSize5: 24
 URxvt.faceSize6: 32
-URxvt.initialFont: 6
+URxvt.initialFont: 20
 !URxvt.urlLauncher: firefox
 !URxvt.selectToClipboard: true
 !URxvt.perl-ext: default,matcher,font-size,url-select
