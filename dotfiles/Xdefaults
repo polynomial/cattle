@@ -1,6 +1,6 @@
-Emacs.font: Terminus-24
-*font: xft:FreeMono:pixelsize=24
-*boldFont: xft:FreeMono:pixelsize=24
+Emacs.font: Terminus-18
+*font: xft:FreeMono:pixelsize=18
+*boldFont: xft:FreeMono:pixelsize=18
 !urxvt*background: [95]#000000
 !URxvt.letterSpace: -1
 !URxvt.lineSpace: -3

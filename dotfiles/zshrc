@@ -29,28 +29,23 @@ fi
 
 #machine shortcuts
 alias t="ssh ben@tspigot.net"
-alias b="ssh -e ^t -A bsmith@10.10.2.210"
 
 #aliases of justice
-alias ss='ssh -2 -A -x -l root -e ^t '
 alias sd="screen -d"
 alias sr="screen -r"
 alias less="less -C "
 alias .zs="source ~/.zshrc"
-alias kw="(killall wterm&)"
-alias xterm="xterm -bg black -fg green -sb -ls -sl 10000 &"
+#alias kw="(killall wterm&)"
+#alias xterm="xterm -bg black -fg green -sb -ls -sl 10000 &"
 
 # maybe make other stuff easier
-alias mp="mplayer -fs -zoom "
+#alias mp="mplayer -fs -zoom "
 alias mogm='mplayer -fs -aid 1 -sid 0 -v '
-alias p="feh -FzZdD15 "
-alias f="feh -FZd "
-
-# learn to type or drink less
-alias figner="finger"
-alias ns="nslookup"
-alias pign="ping"
-alias whios="whois"
+alias mp="vlc --play-and-exit --fullscreen --global-key-jump-short z --global-key-jump+short l --global-key-jump-long / --global-key-jump+long - --key-quit q"
+alias p="qiv -G -m -f -u -i -s -r"
+alias f="qiv -G -m -f -u -i"
+#alias p="feh -FzZdD15 "
+#alias f="feh -FZd "
 
 #networking aliases
 alias arin="whois -h whois.arin.net "
@@ -67,7 +62,7 @@ umask 77
 export BLOCKSIZE=K
 export crt=24
 export EDITOR=vim
-export MAILCHECK=30
+#export MAILCHECK=30
 export PAGER=less
 export SPROMPT="$PS1 (sp) %R %r%# "
 unsetopt correctall
@@ -107,9 +102,6 @@ fi
 # this set's our xterm to be u@h ~
 case $TERM in
   *rxvt*)
-    precmd () {print -Pn "\e]0;%n@%m: %~\a"}
-  ;;
-  xterm*)
     precmd () {print -Pn "\e]0;%n@%m: %~\a"}
   ;;
 esac

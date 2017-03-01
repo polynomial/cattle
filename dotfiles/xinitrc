@@ -2,3 +2,8 @@ cd ~
 xset r rate 200 50
 xset b 0
 eval $(cat ~/.fehbg)
+for display in 1 2 3 4
+do
+  export DISPLAY=:0.${display}
+  awesome & disown
+done
