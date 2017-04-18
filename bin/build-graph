@@ -1,0 +1,1 @@
+(echo "digraph tech {"; for i in $(find bin -type f); do b=$(basename $i); for found in $(ag -l $b) ; do  echo "\"$found\" -> \"$b\";"; done; done ; echo "}" ) 2>&1 | tee /tmp/tech2.dot

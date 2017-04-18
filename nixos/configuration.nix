@@ -3,101 +3,92 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
 let
+  vars = import ./vars.nix { inherit pkgs; };
 
-in
-{
+in {
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  system.stateVersion = "16.09";
+
+
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
-      ./virtualbox.nix
-      ./vpnc.nix
-      ./users.nix
-      ./xserver.nix
+      ./security-keys.nix
+      ./vpn/extole.nix
     ];
 
-  security.sudo.wheelNeedsPassword = false; # maybe I am power hungry?
+  services.autofs = {
+    enable = true;
+    autoMaster = ''
+      /a file,sun:/etc/autohuugs
+    '';
+  };
+  environment.etc."autohuugs".text = ''
+      huugs	-ro,soft,intr	10.4.1.1:/huugs
+  '';
 
-  networking.hostName = "bsmith-laptop"; # Define your hostname.
-  networking.hostId = "f18ed587";
-  networking.wireless.enable = true;
 
-  i18n = {
-    consoleKeyMap = "dvorak";
+  # minecraft silliness
+  hardware.opengl.driSupport32Bit = true;
+  hardware.pulseaudio.support32Bit = true;
+
+  networking.hostName = vars.hostName;
+
+  # Extole Development (should be moved to extole.nix)
+  #virtualisation.docker.enable = true;
+  virtualisation.virtualbox.host.enable = true;
+  virtualisation.virtualbox.host.headless = true;
+  services.grafana = {
+    enable = true;
+    security.adminPassword = "foob4r";
   };
 
-  services.acpid.enable = true;
-  #services.rsyslogd.enable = true;
-  services.upower.enable = true;
-  services.openssh.enable = true;
+  services.logind.extraConfig = ''
+    HandlePowerKey=ignore
+  '';
+  services.sshd.enable = true;
+  services.dnsmasq.enable = true;
+  services.dnsmasq.extraConfig = ''
+    address=/.lo.intole.net/127.0.0.1
+    address=/.lo.extole.io/10.11.14.16
+    address=/.lo.vokate.com/10.11.14.16
+    address=/my-lo.extole.com/10.11.14.16
+    address=/tags-lo.extole.com/10.11.14.16
+    server=/.intole.net/10.1.0.2
+  '';
+#  networking.extraHosts = ''
+#  '';
+  services.nfs.server.exports = ''
+    /home/bsmith/src/extole/tech 10.11.14.16(rw,no_subtree_check,all_squash,anonuid=1000,anongid=100,async,insecure)
+  '';
 
-  programs.ssh.agentTimeout = "12h";
-  programs.zsh.enable = true;
+  networking.wireless.enable = false;
+  networking.wireless.userControlled.enable = true;
+  networking.firewall.enable = false;
+
+  # Select internationalisation properties.
+  i18n = {
+    consoleFont = "Lat2-Terminus16";
+    consoleKeyMap = "us";
+    defaultLocale = "en_US.UTF-8";
+  };
+
+  # Set your time zone.
+  time.timeZone = vars.timeZone;
+
+  # List packages installed in system profile. To search by name, run:
+  environment.systemPackages = vars.systemPackages;
+
+  hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   powerManagement.enable = true;
-  time.timeZone = "America/Los_Angeles";
-  fonts.enableCoreFonts = true;
+  services.upower.enable = true;
+  services.nfs.server.enable = true;
 
-  nix.binaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
-  nix.trustedBinaryCaches = [ http://cache.nixos.org http://hydra.nixos.org ];
-
-  
-  environment.systemPackages = with pkgs; [
-    xpdf
-    firefox
-    awscli
-    #keybase-node-client
-    gimp
-    gnupg
-    vpnc
-    ack
-    awesome
-    python
-    python3
-    autoconf
-    automake
-    xflux
-    cmake
-    gnumake
-    python27Packages.pip
-    pypy
-    mtr
-    xclip
-    terminus_font
-    xlibs.xbacklight
-    bc
-    oraclejdk8
-    rxvt
-    acpi
-    hugin
-    autojump
-    axel
-    bind
-    binutils
-    chromium
-    dmenu
-    evince
-    file
-    gitFull
-    htop
-    keepassx
-    mg
-    mplayer
-    nix-repl
-    openconnect
-    powertop
-    rxvt_unicode
-    sbt
-    vim
-    scrot
-    silver-searcher
-    terminator
-    xdg_utils
-    xlibs.xev
-    xlibs.xset
-  ];
-
+  services.tlp.enable = false;
   nixpkgs.config = {
 
     allowUnfree = true;
@@ -109,4 +100,40 @@ in
 
   };
 
+
+  # Enable the X11 windowing system.
+  services.xserver = {
+    enable = true;
+    layout = vars.layout;
+    windowManager.default = "awesome";
+    windowManager.awesome.enable = true;
+    desktopManager.default = "none";
+    desktopManager.xterm.enable = false;
+
+    xkbOptions = "terminate:ctrl_alt_bksp, ctrl:nocaps";
+    #videoDrivers = [ "intel" ];
+
+    multitouch.enable = true;
+    multitouch.invertScroll = true;
+    multitouch.ignorePalm = true;
+
+    #synaptics.enable = false;
+    #synaptics.tapButtons = false;
+    #synaptics.twoFingerScroll = true;
+    #synaptics.palmDetect = true;
+  };
+
+  security.sudo.enable = true;
+  security.sudo.wheelNeedsPassword = false;
+
+  programs.zsh.enable = true;
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.extraUsers."${vars.username}" = {
+    isNormalUser = true;
+    uid = 1000;
+    shell = "/run/current-system/sw/bin/zsh";
+    extraGroups = [ "wheel" "audio" "video" "systemd-journal" "systemd-network" ];
+  };
+
+  #system.stateVersion = "16.03";
 }

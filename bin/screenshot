@@ -1,0 +1,5 @@
+#!/bin/sh
+name=$(date +%s).$$
+mkdir -p ${HOME}/.screenshots
+xwd -root -out ${HOME}/.screenshots/${name}.xwd
+convert ${HOME}/.screenshots/${name}.xwd ${HOME}/.screenshots/${name}.png

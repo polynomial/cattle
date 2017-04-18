@@ -1,0 +1,4 @@
+#!/bin/sh
+brightness=$(cat /sys/devices/pci0000:00/0000:00:03.0/0000:01:00.0/drm/card0/card0-eDP-1/radeon_bl0/actual_brightness)
+new_brightness=$(($brightness $1 $2))
+echo "echo $new_brightness >/sys/devices/pci0000:00/0000:00:03.0/0000:01:00.0/drm/card0/card0-eDP-1/radeon_bl0/brightness" | sudo bash
