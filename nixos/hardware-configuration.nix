@@ -8,13 +8,12 @@
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
-  hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "usbhid" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/9b9db588-31b3-489c-83e0-29549c39bc6c";
+    { device = "/dev/disk/by-uuid/57f305a6-a752-435d-9e28-5c3bfdff2626";
       fsType = "ext4";
     };
 
@@ -27,9 +26,6 @@
     [ { device = "/dev/disk/by-uuid/22b1be01-09ce-4596-8f1f-ff3007110609"; }
     ];
 
-  nix.maxJobs = 4;
-
-  # Use the gummiboot efi boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  nix.maxJobs = lib.mkDefault 4;
+  powerManagement.cpuFreqGovernor = "powersave";
 }
