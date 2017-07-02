@@ -7,32 +7,20 @@
   imports =
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
-  boot.initrd.kernelModules = [ "vfat" ];
-  boot.initrd.luks.cryptoModules = [ "aes" "sha512" "xts" ];
 
-  #boot.kernelPackages = pkgs.linuxPackages_4_4;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  hardware.bluetooth.enable = true;
-
-
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "sdhci_pci" ];
+  #hardware.pulseaudio.enable = true;
+  boot.initrd.availableKernelModules = [ "uhci_hcd" "ehci_pci" "ata_piix" "mvsas" "pata_marvell" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/dc9580d5-5747-4b52-88f4-8f1014f23755";
+    { device = "/dev/disk/by-uuid/ab2758a0-ae50-466a-bc54-657bdc0234f5";
       fsType = "ext4";
     };
 
-  boot.initrd.luks.devices."nixosroot".device = "/dev/disk/by-uuid/cd211afc-32fe-4dff-969d-120f328df38b";
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/3f5d2b16-d763-4390-995c-4b31b0ff92d0"; }
+    ];
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/646E-4667";
-      fsType = "vfat";
-    };
-
-  swapDevices = [ ];
-
-  nix.maxJobs = lib.mkDefault 4;
+  nix.maxJobs = lib.mkDefault 8;
 }

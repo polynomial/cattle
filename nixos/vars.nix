@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> {} }:
 {
-  hostName = "bsmith-y900";
+  hostName = "bsmith-desktop";
   timeZone = "America/Los_Angeles";
   systemPackages = with pkgs; [
     vim
@@ -36,6 +36,7 @@
     pcsctools
   ];
 
-  layout = "dvorak"; # set for services.xserver.layout
+  #layout = "dvorak"; # set for services.xserver.layout
+  layout = "us"; # set for services.xserver.layout
   username = "bsmith";
 }
