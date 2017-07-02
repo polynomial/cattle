@@ -10,7 +10,7 @@ in {
   imports =
     [
       ./hardware-configuration.nix
-      ./security-keys.nix
+      #./security-keys.nix
       ./vpn/extole.nix
       ./vpn/pia.nix
     ];
@@ -25,90 +25,16 @@ in {
       huugs	-ro,soft,intr	10.4.1.1:/huugs
   '';
 
-  # grafana testing
-  services.grafana = {
-    enable = true;
-  };
-
-  services.nginx = {
-    enable = true;
-    httpConfig = ''
-    default_type                 application/octet-stream;
-    map_hash_bucket_size         1024;
-    map_hash_max_size            102400;
-    variables_hash_bucket_size   1024;
-    variables_hash_max_size      102400;
-    client_max_body_size         100M;
-    server_tokens                off; # hide the version
-    sendfile                     on;
-    keepalive_timeout            65;
-    gzip                         on;
-    gzip_proxied                 any;
-    set_real_ip_from             10.0.0.0/8;      #  Amazon AWS internal
-    set_real_ip_from             127.0.0.1; # local development
-    real_ip_header               X-Forwarded-For;
-    real_ip_recursive            on;
-    resolver                     172.16.0.23 valid=5m;
-    resolver_timeout             60s;
-    # currently this breaks login
-    #proxy_http_version          1.1;
-    proxy_connect_timeout        1;
-    proxy_send_timeout           5;
-    proxy_read_timeout           305;
-
-
-    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-                    '$status $body_bytes_sent $request_time "$http_referer" '
-                    '"$http_user_agent" "$http_x_forwarded_for" "$scheme://$host$uri"';
-
-    log_format detailed 'status=$status ^ request_time=$request_time ^ upstream_response_time=$upstream_response_time ^ '
-                        'pipe=$pipe ^ bytes_sent=$bytes_sent ^ connection=$connection ^ remote_addr=$remote_addr ^ '
-                        'x_forwarded_for=$http_x_forwarded_for ^ host=$host ^ time=$time_iso8601 ^ request=$request ^ '
-                        'cookie_ex_id=$cookie_ex_id ^ cookie_access_token=$cookie_access_token ^ http_Authorization=$http_Authorization ^ '
-                        'http_referer=$http_referer ^ http_user_agent=$http_user_agent ^ '
-                        'upstream_addr=$upstream_addr ^ http_X-Extole-Polling-Time=$http_X_Extole_Polling_Time';
-
-    error_log  syslog:server=127.0.0.1 warn;
-    access_log syslog:server=127.0.0.1,facility=local6,tag=nginx,severity=info detailed;
-
-
-    gzip_types text/plain text/css text/xml application/xml text/javascript
-               application/x-javascript application/json application/xml+rss
-               image/svg+xml application/vnd.ms-fontobject application/x-font-ttf
-               font/opentype font/x-woff image/gif image/jpeg image/png image/tiff;
-
-
-
-      upstream client {
-        keepalive 100;
-        server client-0.qa.intole.net:8080 max_fails=10 fail_timeout=10s;
-        server client-1.qa.intole.net:8080 max_fails=10 fail_timeout=10s;
-        server client-2.qa.intole.net:8080 max_fails=10 fail_timeout=10s;
-      }
-      server {
-        listen 80;
-    access_log syslog:server=127.0.0.1,facility=local6,severity=info,tag=nginx_client_access  detailed;
-    error_log syslog:server=127.0.0.1,facility=local6,severity=error,tag=nginx_client_error info;
-        location /appboot/status {
-          stub_status on;
-          allow 10.0.0.0/8;
-          allow 127.0.0.0/8;
-          deny all;
-        }
-        location / {
-          proxy_pass http://client;
-        }
-      }
-'';
-};
-
   # minecraft silliness
   hardware.opengl.driSupport32Bit = true;
   hardware.pulseaudio.support32Bit = true;
 
-  # Use the systemd-boot efi boot loader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  # Use the systemd-BOOT EFI Boot loader.
+  #boot.loader.systemd-boot.enable = true;
+  #boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.version = 2;
+  boot.loader.grub.device = "/dev/sdb"; # or "nodev" for efi only
 
   networking.hostName = vars.hostName;
 
@@ -126,6 +52,7 @@ in {
     address=/.lo.vokate.com/10.11.14.16
     address=/my-lo.extole.com/10.11.14.16
     address=/tags-lo.extole.com/10.11.14.16
+    server=/.ec2.internal/10.1.0.2
     server=/.intole.net/10.1.0.2
   '';
 #  networking.extraHosts = ''
@@ -151,7 +78,7 @@ in {
   # List packages installed in system profile. To search by name, run:
   environment.systemPackages = vars.systemPackages;
 
-  hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
+  #hardware.opengl.extraPackages = [ pkgs.vaapiIntel ];
 
   powerManagement.enable = true;
   services.upower.enable = true;
@@ -178,20 +105,190 @@ in {
     windowManager.awesome.enable = true;
     desktopManager.default = "none";
     desktopManager.xterm.enable = false;
+    videoDrivers = [ "nvidiaLegacy340" ];
+    serverFlagsSection = ''
+    Option "DefaultServerLayout" "Layout[all]"
+    '';
+    serverLayoutSection = ''
 
-    xkbOptions = "terminate:ctrl_alt_bksp, ctrl:nocaps";
-    videoDrivers = [ "intel" ];
+    Screen      0  "Screen-nvidia[0]" 0 0
+    Screen      1  "Screen1" RightOf "Screen-nvidia[0]"
+    Screen      2  "Screen2" LeftOf "Screen-nvidia[0]"
+    Screen      3  "Screen3" Above "Screen2"
+    Screen      4  "Screen4" Above "Screen1"
+    Option         "Xinerama" "0"
+EndSection
 
-    multitouch.enable = true;
-    multitouch.invertScroll = true;
-    multitouch.ignorePalm = true;
+Section "ServerLayout"
+    Identifier "NoOverRidesAreLame"
+    '';
+    monitorSection = ''
+    VendorName     "Unknown"
+    ModelName      "Samsung SyncMaster"
+    HorizSync       30.0 - 81.0
+    VertRefresh     56.0 - 60.0
+    Option         "DPMS"
+EndSection
 
-    synaptics.enable = false;
-    synaptics.tapButtons = false;
-    synaptics.twoFingerScroll = true;
-    synaptics.palmDetect = true;
+Section "Monitor"
+    # HorizSync source: unknown, VertRefresh source: unknown
+    Identifier     "Monitor1"
+    VendorName     "Unknown"
+    ModelName      "Samsung SyncMaster"
+    HorizSync       0.0 - 0.0
+    VertRefresh     0.0
+    Option         "DPMS"
+EndSection
+
+Section "Monitor"
+    # HorizSync source: unknown, VertRefresh source: unknown
+    Identifier     "Monitor2"
+    VendorName     "Unknown"
+    ModelName      "Samsung SyncMaster"
+    HorizSync       0.0 - 0.0
+    VertRefresh     0.0
+    Option         "DPMS"
+EndSection
+
+Section "Monitor"
+    # HorizSync source: unknown, VertRefresh source: unknown
+    Identifier     "Monitor3"
+    VendorName     "Unknown"
+    ModelName      "Samsung SyncMaster"
+    HorizSync       0.0 - 0.0
+    VertRefresh     0.0
+    Option         "DPMS"
+EndSection
+
+Section "Monitor"
+    # HorizSync source: edid, VertRefresh source: edid
+    Identifier     "Monitor4"
+    VendorName     "Unknown"
+    ModelName      "Samsung SyncMaster"
+    HorizSync       30.0 - 81.0
+    VertRefresh     56.0 - 60.0
+    Option         "DPMS"
+	'';
+    deviceSection = ''
+    
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce 210"
+    BusID          "PCI:6:0:0"
+    Screen          0
+EndSection
+
+Section "Device"
+    Identifier     "Device1"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce 210"
+    BusID          "PCI:4:0:0"
+EndSection
+
+Section "Device"
+    Identifier     "Device2"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce 210"
+    BusID          "PCI:5:0:0"
+    Screen          0
+EndSection
+
+Section "Device"
+    Identifier     "Device3"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce 210"
+    BusID          "PCI:5:0:0"
+    Screen          1
+EndSection
+
+Section "Device"
+    Identifier     "Device4"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "GeForce 210"
+    BusID          "PCI:6:0:0"
+    Screen          1
+	'';
+
+	screenSection = ''
+
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "DVI-I-1: nvidia-auto-select +0+0"
+    Option         "SLI" "Off"
+    Option         "MultiGPU" "Off"
+    Option         "BaseMosaic" "off"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+
+Section "Screen"
+    Identifier     "Screen1"
+    Device         "Device1"
+    Monitor        "Monitor1"
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "nvidia-auto-select +0+0"
+    Option         "SLI" "Off"
+    Option         "MultiGPU" "Off"
+    Option         "BaseMosaic" "off"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+
+Section "Screen"
+    Identifier     "Screen2"
+    Device         "Device2"
+    Monitor        "Monitor2"
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "DVI-I-1: nvidia-auto-select +0+0"
+    Option         "SLI" "Off"
+    Option         "MultiGPU" "Off"
+    Option         "BaseMosaic" "off"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+
+Section "Screen"
+    Identifier     "Screen3"
+    Device         "Device3"
+    Monitor        "Monitor3"
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "HDMI-0: nvidia-auto-select +0+0"
+    Option         "SLI" "Off"
+    Option         "MultiGPU" "Off"
+    Option         "BaseMosaic" "off"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+
+Section "Screen"
+    Identifier     "Screen4"
+    Device         "Device4"
+    Monitor        "Monitor4"
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "HDMI-0: nvidia-auto-select +0+0"
+    Option         "SLI" "Off"
+    Option         "MultiGPU" "Off"
+    Option         "BaseMosaic" "off"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+	'';
+
+
   };
 
+  services.openssh.enable = true;
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
 
