@@ -52,15 +52,13 @@ in {
   services.sshd.enable = true;
   services.dnsmasq.enable = true;
   services.dnsmasq.extraConfig = ''
-    address=/.lo.intole.net/127.0.0.1
-    address=/.lo.extole.io/10.11.14.16
-    address=/.lo.vokate.com/10.11.14.16
-    address=/my-lo.extole.com/10.11.14.16
-    address=/tags-lo.extole.com/10.11.14.16
+    server=/.ec2.internal/10.1.0.2
     server=/.intole.net/10.1.0.2
+    conf-dir=/etc/dnsmasq.d
   '';
-#  networking.extraHosts = ''
-#  '';
+  networking.extraHosts = ''
+  52.45.236.74 my.extole.com
+  '';
   services.nfs.server.exports = ''
     /home/bsmith/src/extole/tech 10.11.14.16(rw,no_subtree_check,all_squash,anonuid=1000,anongid=100,async,insecure)
   '';
