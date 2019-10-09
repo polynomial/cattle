@@ -38,19 +38,24 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/nix/store/02r07l8zj0ypf3hdzp98rsfzhz547ylp-awesome-3.5.6/share/awesome/themes/default/theme.lua")
+beautiful.init("/nix/store/yfnvm5n71p97cgljwkfidjph44czdypa-awesome-4.3/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt -sl 10000 +sb -ls -fg green -bg black"
+terminal = "urxvt -sl 10000 +sb -ls"
+screen_shot = "/home/bsmith/bin/screenshot.sh"
 screen_lock = "slimlock"
-screen_lock_daemon = "xscreensaver -no_splash"
+--screen_lock = "light-locker-command -l"
+--screen_lock_daemon = "xscreensaver -no_splash"
+new_background = "feh --randomize --bg-center /home/bsmith/.desktop"
 dec_backlight = "xbacklight -dec 5"
 inc_backlight = "xbacklight -inc 5"
 dec_sound = "amixer set Master 5%-"
 inc_sound = "amixer set Master 5%+"
-start_vpnc = "sudo vpnc /etc/vpnc/default.conf"
-stop_vpnc = "sudo vpnc-disconnect"
-_backlight = "xbacklight -dec 10"
+mute_sound = "amixer set Master 100%-"
+auto_fan = "/home/bsmith/bin/fan_auto"
+inc_fan = "/home/bsmith/bin/fan_inc"
+--start_vpnc = "sudo vpnc /etc/vpnc/default.conf"
+--stop_vpnc = "sudo vpnc-disconnect"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -119,7 +124,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock()
+mytextclock = wibox.widget.textclock()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -189,7 +194,7 @@ for s = 1, screen.count() do
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "top", screen = s })
+    mywibox[s] = awful.wibar({ position = "top", screen = s })
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
@@ -251,13 +256,22 @@ globalkeys = awful.util.table.join(
         end),
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ }, "#232", function () awful.util.spawn(dec_backlight) end),
+    awful.key({ }, "#233", function () awful.util.spawn(inc_backlight) end),
+    awful.key({ }, "#122", function () awful.util.spawn(dec_sound) end),
+    awful.key({ }, "#123", function () awful.util.spawn(inc_sound) end),
+    awful.key({ }, "#121", function () awful.util.spawn(mute_sound) end),
+    awful.key({ }, "#164", function () awful.util.spawn(screen_lock) end),
+    awful.key({ }, "#179", function () awful.util.spawn(auto_fan) end),
+    awful.key({ }, "#198", function () awful.util.spawn(inc_fan) end),
+
     awful.key({ modkey,           }, "a", function () awful.util.spawn(dec_backlight) end),
     awful.key({ modkey,           }, "o", function () awful.util.spawn(inc_backlight) end),
     awful.key({ modkey,           }, "e", function () awful.util.spawn(dec_sound) end),
     awful.key({ modkey,           }, "u", function () awful.util.spawn(inc_sound) end),
     awful.key({ modkey,           }, "p", function () awful.util.spawn(screen_lock) end),
-    awful.key({ modkey,           }, "g", function () awful.util.spawn(start_vpnc) end),
-    awful.key({ modkey,           }, "c", function () awful.util.spawn(stop_vpnc) end),
+    awful.key({ modkey,           }, "s", function () awful.util.spawn(screen_shot) end),
+    awful.key({ modkey,           }, "b", function () awful.util.spawn(new_background) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
@@ -423,7 +437,7 @@ client.connect_signal("manage", function (c, startup)
                 )
 
         -- Widgets that are aligned to the left
-        local left_layout = wibox.layout.fixed.horizontal()
+        local left_layout = wibar.layout.fixed.horizontal()
         left_layout:add(awful.titlebar.widget.iconwidget(c))
         left_layout:buttons(buttons)
 
@@ -465,6 +479,7 @@ function run_once(cmd)
   awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
 end
 
-run_once("eval `cat ~/.fehbg`")
-run_once("sudo ~/bin/cpu_speed")
-run_once("xflux -z 94111")
+run_once("feh --randomize --bg-center /home/bsmith/.desktop")
+run_once("xflux -z 94005")
+--run_once("light-locker &")
+-- run_once("xbattbar -a -O black -o black -t 1 right")
